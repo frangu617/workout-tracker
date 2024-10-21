@@ -38,7 +38,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="C:\Users\eddaw\Documents\coding\workout-tracker\bakend\venv"
+VIRTUAL_ENV="C:\Users\eddaw\Documents\coding\workout-tracker\backend\venv"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"
