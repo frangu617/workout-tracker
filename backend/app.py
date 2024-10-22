@@ -39,6 +39,24 @@ def get_users():
         users_list.append(user_data)
     return jsonify( users_list)
 
+@app.route('workouts', methods=['GET'])
+def get_workouts():
+    workouts = Workout.query.all()
+    workouts_list = []
+    for workout in workouts:
+        workout_data = {
+            'id': workout.id,
+            'user_id': workout.user_id,
+            'workout_type': workout.workout_type,
+            'workout_name': workout.workout_name,
+            'duration': workout.duration,
+            'sets': workout.sets,
+            'reps': workout.reps,
+            'weight': workout.weight
+        }
+        workouts_list.append(workout_data)
+    return jsonify(workouts_list)
+
 @app.route('/users/<int:user_id>', methods=['GET'])
 def get_user(user_id):
     user = User.query.get(user_id)
@@ -53,6 +71,24 @@ def get_user(user_id):
         return jsonify(user_data)
     else:
         return jsonify({'message': 'User not found'})
+    
+@app.route('/workouts/<int:workout_id>', methods=['GET'])
+def get_workout(workout_id):
+    workout = Workout.query.get(workout_id)
+    if workout:
+        workout_data = {
+            'id': workout.id,
+            'user_id': workout.user_id,
+            'workout_type': workout.workout_type,
+            'workout_name': workout.workout_name,
+            'duration': workout.duration,
+            'sets': workout.sets,
+            'reps': workout.reps,
+            'weight': workout.weight
+        }
+        return jsonify(workout_data)
+    else:
+        return jsonify({'message': 'Workout not found'})
     
     
 @app.route('/edit_user/<int:user_id>', methods=['PUT'])
@@ -70,6 +106,23 @@ def edit_user(user_id):
         return jsonify({'message': 'User not found'}), 404
 
     
+@app.route('/edit_workout/<int:workout_id>', methods=['PUT'])
+def edit_workout(workout_id):
+    workout = Workout.query.get(workout_id)
+    if workout:
+        data = request.get_json()
+        workout.user_id = data.get('user_id', workout.user_id)
+        workout.workout_type = data.get('workout_type', workout.workout_type)
+        workout.workout_name = data.get('workout_name', workout.workout_name)
+        workout.duration = data.get('duration', workout.duration)
+        workout.sets = data.get('sets', workout.sets)
+        workout.reps = data.get('reps', workout.reps)
+        workout.weight = data.get('weight', workout.weight)
+        db.session.commit()
+        return jsonify({'message': 'Workout updated successfully'})
+    else:
+        return jsonify({'message': 'Workout not found'}), 404
+    
     
 @app.route('/delete_user/<int:user_id>', methods=['DELETE'])
 def delete_user(user_id):
@@ -81,6 +134,17 @@ def delete_user(user_id):
     else:
         return jsonify({'message': 'User not found'}), 404
 
+@app.route('/delete_workout/<int:workout_id>', methods=['DELETE'])
+def delete_workout(workout_id):
+    workout = Workout.query.get(workout_id)
+    if workout:
+        db.session.delete(workout)
+        db.session.commit()
+        return jsonify({'message': 'Workout deleted successfully'})
+    else:
+        return jsonify({'message': 'Workout not found'}), 404
+    
+    
 @app.route('/add_user', methods=['POST'])
 def add_user():
     data = request.get_json()
